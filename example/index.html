@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>html-pkgr</title>
+    <link rel="stylesheet" href="https://highlightjs.org/static/demo/styles/monokai.css">
+  </head>
+  <body>
+    <p>
+      Below is some code from <span class="font_code">pack.py</span>, rendered by <a target="_blank" href="https://highlightjs.org/">highlight.js</a>.
+    </p>
+    <pre><code class="python hljs font_code">if __name__ == '__main__':
+  # args and usage
+  parser = argparse.ArgumentParser()
+  parser.add_argument('url', type=str, help='url to pack')
+  args = parser.parse_args()
+
+  # pack
+  html = Pack.pack(args.url)
+
+  # write result to stdout
+  print(html)
+</code></pre>
+    <p>
+      When this page is packed, as demonstrated below, all highlight.js resources (including JS and CSS) will be embedded within the generated HTML file as data URIs.
+    </p>
+    <pre><code class="bash hljs font_code">python -m SimpleHTTPServer
+python3 http://localhost:8000/index.html &gt; index_packed.html</code></pre>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
