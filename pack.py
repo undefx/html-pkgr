@@ -31,6 +31,7 @@ class Pack:
 
   @staticmethod
   def fetch(url):
+    #sys.stderr.write(url + '\n')
     try:
       return urllib.request.urlopen(url).read()
     except Exception as ex:
@@ -41,24 +42,21 @@ class Pack:
   def datafy(url, data=None, mime=None):
     if data is None:
       data = Pack.fetch(url)
-    return Pack.get_prefix(url, mime) + urllib.parse.quote_plus(b64encode(data))
+    res = Pack.get_prefix(url, mime) + urllib.parse.quote_plus(b64encode(data))
+    #if len(res) > 0xffff:
+    #  sys.stderr.write('warning: data URI may be too long (%d)\n' % len(res))
+    return res
 
   @staticmethod
   def datafy_css(url):
     content = Pack.fetch(url)
     css = str(content, 'utf-8')
-    if 'url(' in css:
-      pattern = '^.*:.*url\((.*?)\).*;.*$'
-      lines = []
-      for line in css.split('\n'):
-        match = re.match(pattern, line)
-        if match is None:
-          lines.append(line)
-        else:
-          link = match.group(1)
-          data = Pack.datafy(link)
-          lines.append(re.sub('url\((.*?)\)', 'url(%s)' % data, line))
-      content = '\n'.join(lines).encode('utf-8')
+    pattern = 'url\([\'"]?(.*?)[\'"]?\)'
+    def replace(match):
+      link = match.group(1)
+      data = Pack.datafy(urllib.parse.urljoin(url, link))
+      return 'url(%s)' % data
+    content = re.sub(pattern, replace, css).encode('utf-8')
     return Pack.datafy(url, content, 'text/css')
 
   @staticmethod
@@ -78,7 +76,7 @@ class Pack:
       if not Pack.should_datafy(src):
         continue
       tag['src'] = Pack.datafy(urllib.parse.urljoin(url, src))
-    return str(soup)
+    return str(soup).strip()
 
 
 if __name__ == '__main__':
