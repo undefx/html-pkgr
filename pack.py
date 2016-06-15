@@ -23,7 +23,7 @@ class Pack:
       typ, enc = mimetypes.guess_type(url)
       if typ is None:
         typ = 'application/octet-stream'
-    return 'data:%s;base64,' % typ
+    return 'data:%s;charset=utf-8;base64,' % typ
 
   @staticmethod
   def should_datafy(url):
@@ -76,7 +76,14 @@ class Pack:
       if not Pack.should_datafy(src):
         continue
       tag['src'] = Pack.datafy(urllib.parse.urljoin(url, src))
-    return str(soup).strip()
+    for tag in soup.find_all('iframe'):
+      src = tag.get('src')
+      if not Pack.should_datafy(src):
+        continue
+      link = urllib.parse.urljoin(url, src)
+      data = Pack.pack(link).encode('utf-8')
+      tag['src'] = Pack.datafy(link, data=data, mime='text/html')
+    return str(soup)
 
 
 if __name__ == '__main__':
