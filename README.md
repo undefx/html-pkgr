@@ -4,7 +4,7 @@
 
 # How
 
-**html-pkgr** scans the HTML document for `img`, `link`, and `script` tags, fetches the requisite resources, and replaces `href`/`scr` attributes with a data URIs. It also scans CSS files, replacing `url`s with data URIs.
+**html-pkgr** scans the HTML document for `img`, `link`, `script`, and `iframe` tags, fetches the requisite resources, and replaces `href`/`scr` attributes with a data URIs. It also scans CSS files, replacing `url`s with data URIs.
 
 # Caveats
 
